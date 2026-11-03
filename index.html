@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1b3a">
+  <meta name="description" content="Flipbook digital Sistem Manajemen PT. Mahawangsa - 108 halaman.">
+  <title>Sistem Manajemen PT. Mahawangsa | Flipbook</title>
+  <style>
+    :root {
+      --navy: #07152f;
+      --navy-2: #102a50;
+      --red: #d71932;
+      --gold: #d9a52e;
+      --ink: #f4f7fb;
+      --muted: #aab8cc;
+      --panel: rgba(15, 35, 65, .88);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(31, 71, 122, .46), transparent 58%),
+        linear-gradient(135deg, #0d2850 0%, var(--navy) 60%, #040b18 100%);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0 auto 0 0; width: 6px;
+      background: var(--gold); z-index: 20;
+    }
+    .top-accent { height: 7px; width: 180px; background: var(--red); position: absolute; right: 0; top: 0; }
+    .app { min-height: 100vh; display: flex; flex-direction: column; padding: 24px 24px 18px 30px; }
+    header {
+      width: min(100%, 1320px); margin: 0 auto 16px; display: flex;
+      align-items: center; justify-content: space-between; gap: 18px;
+      border-bottom: 1px solid rgba(217,165,46,.42); padding: 4px 0 14px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center;
+      border: 1px solid rgba(217,165,46,.9); border-radius: 50%; color: var(--gold);
+      font-weight: 900; font-size: 13px; letter-spacing: -.8px;
+      background: linear-gradient(145deg, rgba(255,255,255,.1), rgba(255,255,255,0));
+    }
+    .brand-name { font-size: clamp(14px, 1.7vw, 20px); font-weight: 850; letter-spacing: .09em; line-height: 1.2; }
+    .brand-name span { color: #f12a40; }
+    .brand-sub { margin-top: 4px; color: #dbe5f4; font-size: 10px; letter-spacing: .2em; font-weight: 650; }
+    .doc-tag { color: var(--muted); text-align: right; font-size: 11px; line-height: 1.55; letter-spacing: .06em; }
+    .doc-tag strong { display: block; color: #f1c65e; font-size: 11px; }
+    main { width: 100%; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    .book-heading { text-align: center; margin: 0 0 2px; }
+    .eyebrow { color: var(--gold); font-size: 10px; letter-spacing: .32em; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
+    h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: clamp(20px, 2.3vw, 30px); margin: 0; line-height: 1.15; }
+    .subtitle { color: var(--muted); font-size: 12px; margin-top: 7px; }
+    .book-stage {
+      width: min(94vw, 1240px, 110vh);
+      aspect-ratio: 1.414 / 1;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(0 20px 32px rgba(0,0,0,.38));
+    }
+    #book { width: 100%; height: 100%; margin: 0 auto; }
+    .page { background: #fff; overflow: hidden; }
+    .page img { display: block; width: 100%; height: 100%; object-fit: contain; background: #fff; user-select: none; -webkit-user-drag: none; }
+    .loading {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(5, 15, 32, .88); z-index: 8; border: 1px solid rgba(217,165,46,.3);
+      border-radius: 8px; color: #fff; text-align: center; padding: 24px;
+    }
+    .loading.hidden { display: none; }
+    .spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,.18); border-top-color: var(--gold); border-radius: 50%; animation: spin .85s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .controls {
+      width: min(100%, 1120px); display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 8px; padding: 12px; border: 1px solid rgba(255,255,255,.09);
+      border-radius: 14px; background: var(--panel); box-shadow: 0 8px 26px rgba(0,0,0,.18);
+    }
+    button, .jump-input {
+      min-height: 38px; border-radius: 8px; border: 1px solid rgba(255,255,255,.16);
+      color: var(--ink); background: #19365e; padding: 8px 13px; font: inherit; font-size: 12px;
+    }
+    button { cursor: pointer; font-weight: 700; transition: background .18s, transform .18s, border-color .18s; }
+    button:hover { background: #244a7b; border-color: rgba(217,165,46,.8); transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .primary { background: var(--red); border-color: var(--red); }
+    .primary:hover { background: #b81228; border-color: #f04458; }
+    .counter { min-width: 124px; text-align: center; color: #f1c65e; font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+    .jump { display: flex; align-items: center; gap: 5px; border-left: 1px solid rgba(255,255,255,.14); padding-left: 10px; }
+    .jump label { color: var(--muted); font-size: 11px; }
+    .jump-input { width: 64px; text-align: center; padding: 7px; }
+    .footer { width: min(100%, 1320px); margin: 12px auto 0; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; gap: 12px; color: #8294ae; font-size: 10px; letter-spacing: .04em; }
+    .footer strong { color: #bdc9d9; }
+    .hint { color: #91a4bf; font-size: 10px; text-align: center; }
+    @media (max-width: 700px) {
+      .app { padding: 18px 12px 12px 18px; }
+      header { align-items: flex-start; }
+      .brand-mark { width: 34px; height: 34px; flex-basis: 34px; font-size: 11px; }
+      .brand-sub { font-size: 8px; letter-spacing: .12em; }
+      .doc-tag { font-size: 9px; }
+      .book-stage { width: min(92vw, 520px); aspect-ratio: .707 / 1; max-height: 69vh; }
+      .controls { padding: 9px; gap: 6px; }
+      button { padding: 7px 9px; font-size: 11px; min-height: 36px; }
+      .counter { min-width: 100px; order: 1; width: 100%; }
+      .jump { border-left: 0; padding-left: 0; }
+      .footer { font-size: 9px; flex-direction: column; text-align: center; }
+      .hint { max-width: 90vw; line-height: 1.5; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+</head>
+<body>
+  <div class="top-accent"></div>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark">MHW</div>
+        <div>
+          <div class="brand-name"><span>PT.</span> MAHAWANGSA</div>
+          <div class="brand-sub">SECURITY SERVICE SOLUTION</div>
+        </div>
+      </div>
+      <div class="doc-tag"><strong>FLIPBOOK DIGITAL</strong>SISTEM MANAJEMEN<br>108 HALAMAN</div>
+    </header>
+    <main>
+      <div class="book-heading">
+        <div class="eyebrow">Dokumen Internal Perusahaan</div>
+        <h1>Sistem Manajemen PT. Mahawangsa</h1>
+        <div class="subtitle">Gunakan tombol navigasi, tombol panah keyboard, atau balik halaman langsung.</div>
+      </div>
+      <div class="book-stage" id="book-stage">
+        <div id="book" aria-label="Flipbook Sistem Manajemen PT Mahawangsa">
+      <div class="page" data-density="hard" data-page="1">
+        <img src="assets/pages/page-001.webp" alt="Halaman 1" loading="eager" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="2">
+        <img src="assets/pages/page-002.webp" alt="Halaman 2" loading="eager" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="3">
+        <img src="assets/pages/page-003.webp" alt="Halaman 3" loading="eager" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="4">
+        <img src="assets/pages/page-004.webp" alt="Halaman 4" loading="eager" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="5">
+        <img src="assets/pages/page-005.webp" alt="Halaman 5" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="6">
+        <img src="assets/pages/page-006.webp" alt="Halaman 6" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="7">
+        <img src="assets/pages/page-007.webp" alt="Halaman 7" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="8">
+        <img src="assets/pages/page-008.webp" alt="Halaman 8" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="9">
+        <img src="assets/pages/page-009.webp" alt="Halaman 9" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="10">
+        <img src="assets/pages/page-010.webp" alt="Halaman 10" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="11">
+        <img src="assets/pages/page-011.webp" alt="Halaman 11" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="12">
+        <img src="assets/pages/page-012.webp" alt="Halaman 12" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="13">
+        <img src="assets/pages/page-013.webp" alt="Halaman 13" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="14">
+        <img src="assets/pages/page-014.webp" alt="Halaman 14" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="15">
+        <img src="assets/pages/page-015.webp" alt="Halaman 15" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="16">
+        <img src="assets/pages/page-016.webp" alt="Halaman 16" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="17">
+        <img src="assets/pages/page-017.webp" alt="Halaman 17" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="18">
+        <img src="assets/pages/page-018.webp" alt="Halaman 18" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="19">
+        <img src="assets/pages/page-019.webp" alt="Halaman 19" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="20">
+        <img src="assets/pages/page-020.webp" alt="Halaman 20" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="21">
+        <img src="assets/pages/page-021.webp" alt="Halaman 21" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="22">
+        <img src="assets/pages/page-022.webp" alt="Halaman 22" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="23">
+        <img src="assets/pages/page-023.webp" alt="Halaman 23" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="24">
+        <img src="assets/pages/page-024.webp" alt="Halaman 24" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="25">
+        <img src="assets/pages/page-025.webp" alt="Halaman 25" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="26">
+        <img src="assets/pages/page-026.webp" alt="Halaman 26" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="27">
+        <img src="assets/pages/page-027.webp" alt="Halaman 27" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="28">
+        <img src="assets/pages/page-028.webp" alt="Halaman 28" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="29">
+        <img src="assets/pages/page-029.webp" alt="Halaman 29" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="30">
+        <img src="assets/pages/page-030.webp" alt="Halaman 30" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="31">
+        <img src="assets/pages/page-031.webp" alt="Halaman 31" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="32">
+        <img src="assets/pages/page-032.webp" alt="Halaman 32" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="33">
+        <img src="assets/pages/page-033.webp" alt="Halaman 33" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="34">
+        <img src="assets/pages/page-034.webp" alt="Halaman 34" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="35">
+        <img src="assets/pages/page-035.webp" alt="Halaman 35" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="36">
+        <img src="assets/pages/page-036.webp" alt="Halaman 36" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="37">
+        <img src="assets/pages/page-037.webp" alt="Halaman 37" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="38">
+        <img src="assets/pages/page-038.webp" alt="Halaman 38" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="39">
+        <img src="assets/pages/page-039.webp" alt="Halaman 39" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="40">
+        <img src="assets/pages/page-040.webp" alt="Halaman 40" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="41">
+        <img src="assets/pages/page-041.webp" alt="Halaman 41" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="42">
+        <img src="assets/pages/page-042.webp" alt="Halaman 42" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="43">
+        <img src="assets/pages/page-043.webp" alt="Halaman 43" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="44">
+        <img src="assets/pages/page-044.webp" alt="Halaman 44" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="45">
+        <img src="assets/pages/page-045.webp" alt="Halaman 45" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="46">
+        <img src="assets/pages/page-046.webp" alt="Halaman 46" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="47">
+        <img src="assets/pages/page-047.webp" alt="Halaman 47" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="48">
+        <img src="assets/pages/page-048.webp" alt="Halaman 48" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="49">
+        <img src="assets/pages/page-049.webp" alt="Halaman 49" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="50">
+        <img src="assets/pages/page-050.webp" alt="Halaman 50" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="51">
+        <img src="assets/pages/page-051.webp" alt="Halaman 51" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="52">
+        <img src="assets/pages/page-052.webp" alt="Halaman 52" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="53">
+        <img src="assets/pages/page-053.webp" alt="Halaman 53" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="54">
+        <img src="assets/pages/page-054.webp" alt="Halaman 54" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="55">
+        <img src="assets/pages/page-055.webp" alt="Halaman 55" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="56">
+        <img src="assets/pages/page-056.webp" alt="Halaman 56" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="57">
+        <img src="assets/pages/page-057.webp" alt="Halaman 57" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="58">
+        <img src="assets/pages/page-058.webp" alt="Halaman 58" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="59">
+        <img src="assets/pages/page-059.webp" alt="Halaman 59" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="60">
+        <img src="assets/pages/page-060.webp" alt="Halaman 60" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="61">
+        <img src="assets/pages/page-061.webp" alt="Halaman 61" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="62">
+        <img src="assets/pages/page-062.webp" alt="Halaman 62" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="63">
+        <img src="assets/pages/page-063.webp" alt="Halaman 63" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="64">
+        <img src="assets/pages/page-064.webp" alt="Halaman 64" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="65">
+        <img src="assets/pages/page-065.webp" alt="Halaman 65" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="66">
+        <img src="assets/pages/page-066.webp" alt="Halaman 66" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="67">
+        <img src="assets/pages/page-067.webp" alt="Halaman 67" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="68">
+        <img src="assets/pages/page-068.webp" alt="Halaman 68" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="69">
+        <img src="assets/pages/page-069.webp" alt="Halaman 69" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="70">
+        <img src="assets/pages/page-070.webp" alt="Halaman 70" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="71">
+        <img src="assets/pages/page-071.webp" alt="Halaman 71" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="72">
+        <img src="assets/pages/page-072.webp" alt="Halaman 72" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="73">
+        <img src="assets/pages/page-073.webp" alt="Halaman 73" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="74">
+        <img src="assets/pages/page-074.webp" alt="Halaman 74" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="75">
+        <img src="assets/pages/page-075.webp" alt="Halaman 75" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="76">
+        <img src="assets/pages/page-076.webp" alt="Halaman 76" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="77">
+        <img src="assets/pages/page-077.webp" alt="Halaman 77" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="78">
+        <img src="assets/pages/page-078.webp" alt="Halaman 78" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="79">
+        <img src="assets/pages/page-079.webp" alt="Halaman 79" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="80">
+        <img src="assets/pages/page-080.webp" alt="Halaman 80" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="81">
+        <img src="assets/pages/page-081.webp" alt="Halaman 81" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="82">
+        <img src="assets/pages/page-082.webp" alt="Halaman 82" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="83">
+        <img src="assets/pages/page-083.webp" alt="Halaman 83" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="84">
+        <img src="assets/pages/page-084.webp" alt="Halaman 84" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="85">
+        <img src="assets/pages/page-085.webp" alt="Halaman 85" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="86">
+        <img src="assets/pages/page-086.webp" alt="Halaman 86" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="87">
+        <img src="assets/pages/page-087.webp" alt="Halaman 87" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="88">
+        <img src="assets/pages/page-088.webp" alt="Halaman 88" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="89">
+        <img src="assets/pages/page-089.webp" alt="Halaman 89" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="90">
+        <img src="assets/pages/page-090.webp" alt="Halaman 90" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="91">
+        <img src="assets/pages/page-091.webp" alt="Halaman 91" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="92">
+        <img src="assets/pages/page-092.webp" alt="Halaman 92" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="93">
+        <img src="assets/pages/page-093.webp" alt="Halaman 93" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="94">
+        <img src="assets/pages/page-094.webp" alt="Halaman 94" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="95">
+        <img src="assets/pages/page-095.webp" alt="Halaman 95" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="96">
+        <img src="assets/pages/page-096.webp" alt="Halaman 96" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="97">
+        <img src="assets/pages/page-097.webp" alt="Halaman 97" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="98">
+        <img src="assets/pages/page-098.webp" alt="Halaman 98" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="99">
+        <img src="assets/pages/page-099.webp" alt="Halaman 99" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="100">
+        <img src="assets/pages/page-100.webp" alt="Halaman 100" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="101">
+        <img src="assets/pages/page-101.webp" alt="Halaman 101" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="102">
+        <img src="assets/pages/page-102.webp" alt="Halaman 102" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="103">
+        <img src="assets/pages/page-103.webp" alt="Halaman 103" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="104">
+        <img src="assets/pages/page-104.webp" alt="Halaman 104" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="105">
+        <img src="assets/pages/page-105.webp" alt="Halaman 105" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="106">
+        <img src="assets/pages/page-106.webp" alt="Halaman 106" loading="lazy" decoding="async">
+      </div>
+      <div class="page" data-density="soft" data-page="107">
+        <img src="assets/pages/page-107.webp" alt="Halaman 107" loading="eager" decoding="async">
+      </div>
+      <div class="page" data-density="hard" data-page="108">
+        <img src="assets/pages/page-108.webp" alt="Halaman 108" loading="eager" decoding="async">
+      </div>
+        </div>
+        <div class="loading" id="loading"><div><div class="spinner"></div><strong>Menyiapkan flipbook...</strong><div style="font-size:12px;color:#aab8cc;margin-top:6px">Mohon tunggu sebentar.</div></div></div>
+      </div>
+      <div class="controls" aria-label="Navigasi flipbook">
+        <button id="firstBtn" title="Ke sampul depan">|&lt; Sampul</button>
+        <button id="prevBtn" title="Halaman sebelumnya">&#8592; Sebelumnya</button>
+        <div class="counter" id="counter">Halaman 1 / 108</div>
+        <button class="primary" id="nextBtn" title="Halaman berikutnya">Berikutnya &#8594;</button>
+        <button id="lastBtn" title="Ke halaman terakhir">Terakhir &gt;|</button>
+        <div class="jump">
+          <label for="jumpInput">Halaman</label>
+          <input class="jump-input" id="jumpInput" type="number" min="1" max="108" value="1">
+          <button id="jumpBtn">Buka</button>
+        </div>
+        <button id="fullscreenBtn" title="Tampilkan layar penuh">&#9974; Layar penuh</button>
+      </div>
+      <div class="hint">Sampul depan dan halaman terakhir ditampilkan satu halaman. Halaman isi menggunakan tampilan dua sisi pada layar lebar.</div>
+    </main>
+    <div class="footer"><span><strong>PT. MAHAWANGSA</strong> | Sistem Manajemen | Rahasia - Internal</span><span>PROFESIONAL &bull; KOMITMEN &bull; RESPONSIF</span></div>
+  </div>
+  <script>
+    (function () {
+      const totalPages = 108;
+      const bookElement = document.getElementById('book');
+      const loadingElement = document.getElementById('loading');
+      const counter = document.getElementById('counter');
+      const jumpInput = document.getElementById('jumpInput');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const firstBtn = document.getElementById('firstBtn');
+      const lastBtn = document.getElementById('lastBtn');
+      let pageFlip = null;
+
+      function preloadAround(index) {
+        const pages = bookElement.querySelectorAll('.page img');
+        const start = Math.max(0, index - 2);
+        const end = Math.min(totalPages - 1, index + 4);
+        for (let i = start; i <= end; i++) {
+          if (pages[i]) {
+            pages[i].loading = 'eager';
+            if (pages[i].decode) pages[i].decode().catch(() => {});
+          }
+        }
+      }
+
+      function updateControls() {
+        if (!pageFlip) return;
+        const index = pageFlip.getCurrentPageIndex();
+        const orientation = typeof pageFlip.getOrientation === 'function' ? pageFlip.getOrientation() : 'landscape';
+        let start = index + 1;
+        let end = index + 1;
+        if (orientation !== 'portrait' && index !== 0 && index !== totalPages - 1) {
+          end = Math.min(index + 2, totalPages);
+        }
+        counter.textContent = start === end ? `Halaman ${start} / ${totalPages}` : `Halaman ${start}-${end} / ${totalPages}`;
+        jumpInput.value = String(index + 1);
+        prevBtn.disabled = index <= 0;
+        nextBtn.disabled = index >= totalPages - 1;
+        firstBtn.disabled = index <= 0;
+        lastBtn.disabled = index >= totalPages - 1;
+        preloadAround(index);
+      }
+
+      function goToInputPage() {
+        if (!pageFlip) return;
+        const page = Number.parseInt(jumpInput.value, 10);
+        if (!Number.isFinite(page)) return;
+        pageFlip.turnToPage(Math.max(0, Math.min(totalPages - 1, page - 1)));
+        updateControls();
+      }
+
+      function initFlipbook() {
+        if (!window.St || !window.St.PageFlip) {
+          loadingElement.innerHTML = '<div><strong>Komponen flipbook belum dapat dimuat.</strong><div style="font-size:12px;color:#aab8cc;margin-top:8px">Pastikan perangkat terhubung ke internet lalu muat ulang halaman ini.</div></div>';
+          return;
+        }
+        pageFlip = new St.PageFlip(bookElement, {
+          width: 595,
+          height: 842,
+          size: 'stretch',
+          minWidth: 280,
+          maxWidth: 650,
+          minHeight: 396,
+          maxHeight: 920,
+          autoSize: true,
+          maxShadowOpacity: 0.38,
+          showCover: true,
+          usePortrait: true,
+          mobileScrollSupport: true,
+          flippingTime: 850,
+          drawShadow: true,
+          useMouseEvents: true,
+          showPageCorners: true,
+          disableFlipByClick: false,
+          startPage: 0,
+          swipeDistance: 30
+        });
+        pageFlip.loadFromHTML(bookElement.querySelectorAll('.page'));
+        pageFlip.on('init', function () {
+          loadingElement.classList.add('hidden');
+          updateControls();
+        });
+        pageFlip.on('flip', updateControls);
+        pageFlip.on('changeState', updateControls);
+        window.setTimeout(function () {
+          loadingElement.classList.add('hidden');
+          updateControls();
+        }, 1800);
+      }
+
+      prevBtn.addEventListener('click', () => pageFlip && pageFlip.flipPrev());
+      nextBtn.addEventListener('click', () => pageFlip && pageFlip.flipNext());
+      firstBtn.addEventListener('click', () => pageFlip && pageFlip.turnToPage(0));
+      lastBtn.addEventListener('click', () => pageFlip && pageFlip.turnToPage(totalPages - 1));
+      document.getElementById('jumpBtn').addEventListener('click', goToInputPage);
+      jumpInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') goToInputPage(); });
+      document.getElementById('fullscreenBtn').addEventListener('click', async () => {
+        try {
+          if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+          else await document.exitFullscreen();
+        } catch (error) { console.warn('Fullscreen is not available in this browser.', error); }
+      });
+      document.addEventListener('keydown', (event) => {
+        if (!pageFlip || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(event.target.tagName)) return;
+        if (event.key === 'ArrowRight' || event.key === 'PageDown') { event.preventDefault(); pageFlip.flipNext(); }
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') { event.preventDefault(); pageFlip.flipPrev(); }
+        if (event.key === 'Home') { event.preventDefault(); pageFlip.turnToPage(0); }
+        if (event.key === 'End') { event.preventDefault(); pageFlip.turnToPage(totalPages - 1); }
+      });
+      window.addEventListener('load', initFlipbook);
+    })();
+  </script>
+</body>
+</html>
